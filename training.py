@@ -400,6 +400,10 @@ def training_procedure_trgc(data, order: int, hidden_layer_size: int, end_epoch:
     q_2 = np.quantile(a=a_hat_2, q=alpha_opt)
     a_hat_binary = (a_hat_1 >= q_1) * 1.0
 
+    print('a_hat_binary.shape: ', a_hat_binary.shape)
+    print('a_hat_1.shape: ', a_hat_1.shape)
+    print('coeffs_full_1.shape: ', coeffs_full_1.shape)
+
     if not signed:
         return a_hat_binary, a_hat_1, coeffs_full_1
     else:

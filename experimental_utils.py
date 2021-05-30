@@ -4,7 +4,8 @@ import time
 
 import numpy as np
 
-from utils import eval_causal_structure, eval_causal_structure_binary
+from utils import eval_causal_structure, eval_causal_structure_binary, save_adjacency_matrix_in_csv, \
+    draw_DAGs_using_LINGAM
 
 from datetime import date
 
@@ -82,6 +83,9 @@ def run_grid_search(lambdas: np.ndarray, gammas: np.ndarray, datasets: list, str
                 bal_accs_neg_ij = []
             for l in range(n_datasets):
                 d_l = datasets[l]
+
+                number_of_variables = d_l.shape[1]
+
                 a_l = structures[l]
                 if signed_structures is None:
                     a_hat_l, a_hat_l_, coeffs_full_l = training_procedure_trgc(data=d_l, order=K,
@@ -104,6 +108,17 @@ def run_grid_search(lambdas: np.ndarray, gammas: np.ndarray, datasets: list, str
                                                                                initial_learning_rate=initial_lr,
                                                                                beta_1=beta_1, beta_2=beta_2,
                                                                                verbose=False, signed=True)
+
+                variable_names = ["x_" + str(v) for v in range(number_of_variables)]
+                file_name_binary = logdir + "/estimated_binary_DAG_{}_{}_{}.csv".format(i, j, l)
+                file_name_strength = logdir + "/estimated_strength_DAG_{}_{}_{}.csv".format(i, j, l)
+
+                save_adjacency_matrix_in_csv(file_name_binary, a_hat_l, variable_names)
+                draw_DAGs_using_LINGAM(file_name_binary, a_hat_l, variable_names)
+
+                save_adjacency_matrix_in_csv(file_name_strength, a_hat_l_, variable_names)
+                draw_DAGs_using_LINGAM(file_name_strength, a_hat_l_, variable_names)
+
                 acc_l, bal_acc_l, prec_l, rec_l = eval_causal_structure_binary(a_true=a_l, a_pred=a_hat_l)
                 auroc_l, auprc_l = eval_causal_structure(a_true=a_l, a_pred=a_hat_l_)
                 accs_ij.append(acc_l)
