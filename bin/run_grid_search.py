@@ -97,8 +97,11 @@ if args.experiment == "lorenz96":
         datasets.append(data)
         structures.append(a)
 
-    lambdas = np.linspace(0.0, 3.0, 5)
-    gammas = np.linspace(0.0, 0.025, 5)
+    # lambdas = np.linspace(0.0, 3.0, 5)
+    # gammas = np.linspace(0.0, 0.025, 5)
+    lambdas = np.array([0.2])
+    gammas = np.array([0.5])
+    
 elif args.experiment == "fmri":
     args.p = 15
     args.T = 200
